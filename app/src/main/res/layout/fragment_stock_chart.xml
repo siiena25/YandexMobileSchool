@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="48sp"
+        android:id="@+id/fragment_stock_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="$131.93"
+        android:textSize="28sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+$0.12 (1,15%)"
+        android:textColor="@color/colorGreen"
+        android:textSize="12sp"
+        android:fontFamily="@font/montserrat"
+        android:gravity="center"/>
+
+
+</LinearLayout>

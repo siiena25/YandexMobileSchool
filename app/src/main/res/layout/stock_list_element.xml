@@ -1,0 +1,119 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stock_list_element"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_form_gray">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/stock_image_card"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:background="@drawable/round_form_gray"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:id="@+id/stock_image"
+            android:contentDescription="@string/stock_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_yndx"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/stock_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="72dp"
+        android:paddingEnd="17dp"
+        app:layout_constraintStart_toEndOf="@id/stock_image_card"
+        app:layout_constraintTop_toTopOf="@id/stock_image_card">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/stock_ticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@string/yndx"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@id/stock_image_card"
+                app:layout_constraintTop_toTopOf="@id/stock_image_card" />
+
+            <ImageButton
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:id="@+id/stock_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/ic_favourite_unselect" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/stock_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:baselineAligned="false"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="4 764,6 Р"
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/stock_top"
+        app:layout_constraintStart_toEndOf="@id/stock_image_card"
+        android:paddingStart="72dp"
+        android:paddingEnd="17dp">
+
+        <TextView
+            android:id="@+id/stock_name"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_name"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/montserrat"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/stock_image_card"
+            app:layout_constraintTop_toBottomOf="@id/stock_top"/>
+
+        <TextView
+            android:id="@+id/stock_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:layout_gravity="end"
+            android:text="+55 P (1,15%)"
+            android:textColor="@color/colorBlack"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

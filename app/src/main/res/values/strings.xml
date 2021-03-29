@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">FinProject</string>
+    <string name="find_company_of_ticker">Find company of ticker</string>
+    <string name="find_company_or_ticker">Find company or ticker</string>
+    <string name="stocks">Stocks</string>
+    <string name="favourite">Favourite</string>
+    <string name="stock_image">Stock image</string>
+    <string name="yndx">YNDX</string>
+    <string name="stock_name">Yandex, LLC</string>
+    <string name="fragment_search">search</string>
+    <string name="popular_requests">Popular requests</string>
+    <string name="you_ve_searched_for_this">You\'ve searched for this</string>
+    <string name="stocks_and_favourite">stocks and favourite</string>
+    <string name="fragment_search_empty">search empty</string>
+    <string name="show_more">Show more</string>
+    <string name="fragment_search_result">search result</string>
+    <string name="ideas">Ideas</string>
+    <string name="forecasts">Forecasts</string>
+    <string name="news">News</string>
+    <string name="summary">Summary</string>
+    <string name="chart">Chart</string>
+    <string name="fragment_chart">chart</string>
+    <string name="fragment_summary">summary</string>
+    <string name="fragment_news">news</string>
+    <string name="fragment_forecasts">forecasts</string>
+    <string name="fragment_ideas">ideas</string>
+</resources>
