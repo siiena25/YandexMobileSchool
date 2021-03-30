@@ -75,10 +75,12 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             parseStocks.execute();
         }
 
-        for (String i : favStocks) {
-            int index = Integer.parseInt(i);
-            if (max < index) {
-                max = index;
+        if (favStocks != null) {
+            for (String i : favStocks) {
+                int index = Integer.parseInt(i);
+                if (max < index) {
+                    max = index;
+                }
             }
         }
     }
@@ -224,7 +226,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             if (constraint.toString().isEmpty()) {
                 filteredList.addAll(stocks);
             }
-            else {
+            else if (favStocks != null){
                 if (isSelectFavouriteStocks) {
                     for (int i = 0; i < stocks.size(); i++) {
                         StockListElement stock = stocks.get(i);
@@ -316,7 +318,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             super.onPostExecute(result);
             StockAdapter.this.notifyDataSetChanged();
 
-            if (!isSetFavStocks) {
+            if (favStocks != null && !isSetFavStocks) {
                 if (stocks.size() > max) {
                     for (String index : favStocks) {
                         int i = Integer.parseInt(index);
