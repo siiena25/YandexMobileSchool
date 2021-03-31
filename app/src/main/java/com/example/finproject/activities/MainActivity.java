@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         if (favouriteTextView.getCurrentTextColor() == colorGrey) {
             stockAdapter.setIsSelectAllStocks(false);
             stockAdapter.setIsSelectFavouriteStocks(true);
+            stockAdapter.setIsFiltered(true);
             stockAdapter.getFilter().filter("favourite");
             favouriteTextView.setTextColor(colorBlack);
             favouriteTextView.setTextSize(28);
@@ -200,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             undoFragment();
+        }
+        else {
+            finish();
         }
     }
 

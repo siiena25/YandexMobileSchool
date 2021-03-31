@@ -75,10 +75,12 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             parseStocks.execute();
         }
 
-        for (String i : favStocks) {
-            int index = Integer.parseInt(i);
-            if (max < index) {
-                max = index;
+        if (favStocks != null) {
+            for (String i : favStocks) {
+                int index = Integer.parseInt(i);
+                if (max < index) {
+                    max = index;
+                }
             }
         }
     }
@@ -187,16 +189,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         }
         return stocks.get(pos).getIsStarSelected();
     }
-
-    /*public void setItems(ArrayList<StockListElement> stocks) {
-        this.stocks.addAll(stocks);
-        notifyDataSetChanged();
-    }
-
-    public void clearItems() {
-        stocks.clear();
-        notifyDataSetChanged();
-    }*/
 
     @Override
     public int getItemCount() {
@@ -316,7 +308,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             super.onPostExecute(result);
             StockAdapter.this.notifyDataSetChanged();
 
-            if (!isSetFavStocks) {
+            if (favStocks != null && !isSetFavStocks) {
                 if (stocks.size() > max) {
                     for (String index : favStocks) {
                         int i = Integer.parseInt(index);
@@ -337,12 +329,16 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         void onStarClick(View view, int position);
     }
 
-    public Stock getStock(int position) {
-        return stocks.get(position).getStock();
-    }
-
     public StockListElement getStockListElement(int position) {
-        return stocks.get(position);
+        StockListElement stock;
+        if (isSelectAllStocks) {
+            stock = stocks.get(position);
+        }
+        else {
+            stock = stocks.get(indexOfFilterStocks.get(position));
+            System.out.println(indexOfFilterStocks.get(position));
+        }
+        return stock;
     }
 
     public Set<String> getFavouriteStocks() {
