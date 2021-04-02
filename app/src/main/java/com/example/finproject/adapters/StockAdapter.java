@@ -45,18 +45,9 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
     private ArrayList<Integer> indexOfFilterStocks;
     private Set<String> favStocks;
 
-    private int colorOfChange, i = 0, max = -1;
+    private int colorOfChange, max = -1;
     private String textChange;
     private boolean isSelectAllStocks = true, isSelectFavouriteStocks = false, isFiltered = false, isSetFavStocks = false;
-
-    String[] tickers = { "YNDX", "AAPL", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "APPN",
-            "APPF", "FSLR", "BABA", "FB", "NOK", "GM", "BIDU", "INTC", "AMD", "V" };
-
-    int[] images = { R.drawable.ic_yndx, R.drawable.ic_aapl, R.drawable.ic_googl, R.drawable.ic_amzn,
-            R.drawable.ic_bac, R.drawable.ic_msft, R.drawable.ic_tsla, R.drawable.ic_ma,
-            R.drawable.ic_appn, R.drawable.ic_appf, R.drawable.ic_fslr, R.drawable.ic_baba,
-            R.drawable.ic_fb, R.drawable.ic_nokia, R.drawable.ic_gm, R.drawable.ic_bidu,
-            R.drawable.ic_intc, R.drawable.ic_amd, R.drawable.ic_v };
 
     int elementBackgroundGray = R.drawable.round_form_gray;
     int elementBackgroundWhite = R.drawable.round_form_white;
@@ -70,11 +61,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         this.favStocks = favStocks;
         this.onStockListener = onStockListener;
 
-        for (String ticker : tickers) {
-            ParseStocks parseStocks = new ParseStocks(ticker);
-            parseStocks.execute();
-        }
-
         if (favStocks != null) {
             for (String i : favStocks) {
                 int index = Integer.parseInt(i);
@@ -83,6 +69,20 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
                 }
             }
         }
+
+        /*if (favStocks != null && !isSetFavStocks) {
+            if (stocks.size() > max) {
+                for (String index : favStocks) {
+                    int i = Integer.parseInt(index);
+                    if (stocks.size() > i) {
+                        stocks.get(i).setStarSelected(true);
+                    }
+                    else return;
+                }
+                notifyDataSetChanged();
+                isSetFavStocks = true;
+            }
+        }*/
     }
 
     public void setAllStocks() {
@@ -280,50 +280,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         }
     }
 
-    private class ParseStocks extends AsyncTask<Void, Void, Void> {
-        String ticker;
-        Stock stock;
-
-        ParseStocks(String ticker) {
-            this.ticker = ticker;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                stock = YahooFinance.get(ticker);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            StockListElement stockListElement = new StockListElement();
-            stockListElement.setStock(stock);
-            stocks.add(stockListElement);
-            stocks.get(i).setImageId(images[i]);
-            i++;
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            StockAdapter.this.notifyDataSetChanged();
-
-            if (favStocks != null && !isSetFavStocks) {
-                if (stocks.size() > max) {
-                    for (String index : favStocks) {
-                        int i = Integer.parseInt(index);
-                        if (stocks.size() > i) {
-                            stocks.get(i).setStarSelected(true);
-                        }
-                        else return;
-                    }
-                    notifyDataSetChanged();
-                    isSetFavStocks = true;
-                }
-            }
-        }
-    }
-
     public interface OnStockListener {
         void onStockClick(View view, int position);
         void onStarClick(View view, int position);
@@ -349,5 +305,28 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             }
         }
         return favStocks;
+    }
+
+    public void setStocks(ArrayList<StockListElement> stocks) {
+        this.stocks = stocks;
+
+        if (favStocks != null && !isSetFavStocks) {
+            if (stocks.size() > max) {
+                for (String index : favStocks) {
+                    int i = Integer.parseInt(index);
+                    if (stocks.size() > i) {
+                        stocks.get(i).setStarSelected(true);
+                    }
+                    else return;
+                }
+                notifyDataSetChanged();
+                isSetFavStocks = true;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<StockListElement> getStocks() {
+        return stocks;
     }
 }

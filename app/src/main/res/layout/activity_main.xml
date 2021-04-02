@@ -9,7 +9,8 @@
     android:paddingEnd="16dp"
     android:background="@color/colorWhite"
     android:orientation="vertical"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.MainActivity"
+    android:configChanges="keyboardHidden|orientation">
 
     <SearchView
         android:id="@+id/search_view"
