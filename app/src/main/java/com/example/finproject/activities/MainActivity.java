@@ -140,8 +140,7 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
                 System.out.println(popularStarPosition);
                 if (popularStarPosition.size() != 0) {
                     for (int index = 0; index < popularStarPosition.size(); index++) {
-                        stockAdapter.setIsSelectStar(popularStarPosition.get(index), popularStarIsSelected.get(index));
-                        stockAdapter.notifyItemChanged(popularStarPosition.get(index));
+                        saveFavouriteStocks(popularStarPosition.get(index));
                     }
                     popularStarPosition.clear();
                     popularStarIsSelected.clear();
@@ -182,6 +181,16 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
                 return false;
             }
         });
+    }
+
+    private void saveFavouriteStocks(int position) {
+        stockAdapter.setIsSelectStar(position, !stockAdapter.getIsSelectStar(position));
+        stockAdapter.notifyDataSetChanged();
+
+        Set<String> favouriteStocks = stockAdapter.getFavouriteStocks();
+        editor = sharedPreferences.edit();
+        editor.putStringSet("favourite stocks", favouriteStocks);
+        editor.apply();
     }
 
     public StockAdapter getStockAdapter() {
@@ -227,13 +236,15 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
-            undoFragment();
-            if (currentFragment.equals(FRAGMENT_SEARCH_EMPTY_TEXT)) {
-                recyclerViewStocks.setVisibility(View.VISIBLE);
+        if (!currentFragment.equals(FRAGMENT_SEARCH_RESULT_TEXT)) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+                undoFragment();
+                if (currentFragment.equals(FRAGMENT_SEARCH_EMPTY_TEXT)) {
+                    recyclerViewStocks.setVisibility(View.VISIBLE);
+                }
             }
+            else finish();
         }
-        else finish();
     }
 
     @Override
@@ -301,13 +312,7 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
     }
 
     public void onStarClick(View view, int position) {
-        stockAdapter.setIsSelectStar(position, !stockAdapter.getIsSelectStar(position));
-        stockAdapter.notifyDataSetChanged();
-
-        Set<String> favouriteStocks = stockAdapter.getFavouriteStocks();
-        editor = sharedPreferences.edit();
-        editor.putStringSet("favourite stocks", favouriteStocks);
-        editor.apply();
+        saveFavouriteStocks(position);
     }
 
     @Override
@@ -319,8 +324,7 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
                 boolean isPopularStocks = data.getBooleanExtra("is popular stocks", false);
                 int position = (!isPopularStocks) ? pos : stockAdapter.getPositionsOfPopularStocks()[data.getIntExtra("pos", -1)];
                 if (stockAdapter.getItemCount() > 0 && !isPopularStocks) {
-                    stockAdapter.getStockListElement(position).setStarSelected(isStarSelected);
-                    stockAdapter.notifyItemChanged(position);
+                    saveFavouriteStocks(position);
                 }
                 else {
                     this.popularStarPosition.add(position);
