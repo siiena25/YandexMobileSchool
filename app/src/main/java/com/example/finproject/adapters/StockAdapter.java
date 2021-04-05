@@ -2,9 +2,7 @@ package com.example.finproject.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.finproject.R;
 import com.example.finproject.models.StockListElement;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import yahoofinance.Stock;
-import yahoofinance.YahooFinance;
 
 public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> implements Filterable {
     private final LayoutInflater inflater;
@@ -41,25 +34,17 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
     private final OnStockListener onStockListener;
 
     private ArrayList<StockListElement> stocks;
-    private ArrayList<StockListElement> filterStocks;
-    private ArrayList<Integer> indexOfFilterStocks;
-    private Set<String> favStocks;
+    private final ArrayList<StockListElement> filterStocks;
+    private final ArrayList<Integer> indexOfFilterStocks;
+    private final Set<String> favStocks;
 
-    private int colorOfChange, i = 0, max = -1;
+    private int colorOfChange, max = -1;
     private String textChange;
     private boolean isSelectAllStocks = true, isSelectFavouriteStocks = false, isFiltered = false, isSetFavStocks = false;
 
-    String[] tickers = { "YNDX", "AAPL", "GOOGL", "AMZN", "BAC", "MSFT", "TSLA", "MA", "APPN",
-            "APPF", "FSLR", "BABA", "FB", "NOK", "GM", "BIDU", "INTC", "AMD", "V" };
-
-    int[] images = { R.drawable.ic_yndx, R.drawable.ic_aapl, R.drawable.ic_googl, R.drawable.ic_amzn,
-            R.drawable.ic_bac, R.drawable.ic_msft, R.drawable.ic_tsla, R.drawable.ic_ma,
-            R.drawable.ic_appn, R.drawable.ic_appf, R.drawable.ic_fslr, R.drawable.ic_baba,
-            R.drawable.ic_fb, R.drawable.ic_nokia, R.drawable.ic_gm, R.drawable.ic_bidu,
-            R.drawable.ic_intc, R.drawable.ic_amd, R.drawable.ic_v };
-
     int elementBackgroundGray = R.drawable.round_form_gray;
     int elementBackgroundWhite = R.drawable.round_form_white;
+    private final int[] positionsOfPopularStocks = { 1, 3, 2, 6, 5, 10, 11, 12, 7 };
 
     public StockAdapter(Context context, OnStockListener onStockListener, Set<String> favStocks) {
         this.inflater = LayoutInflater.from(context);
@@ -69,11 +54,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         this.indexOfFilterStocks = new ArrayList<>();
         this.favStocks = favStocks;
         this.onStockListener = onStockListener;
-
-        for (String ticker : tickers) {
-            ParseStocks parseStocks = new ParseStocks(ticker);
-            parseStocks.execute();
-        }
 
         if (favStocks != null) {
             for (String i : favStocks) {
@@ -102,11 +82,11 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
     @SuppressLint({"DefaultLocale", "SetTextI18n", "UseCompatLoadingForDrawables"})
     @Override
     public void onBindViewHolder(@NonNull StockAdapter.ViewHolder holder, int position) {
-        StockListElement currentStock = null;
+        StockListElement currentStock;
         if (isSelectAllStocks) {
             currentStock = stocks.get(position);
         }
-        else if (isFiltered) {
+        else {
             currentStock = filterStocks.get(position);
         }
 
@@ -119,12 +99,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         holder.stockPriceText.setText("$" + String.format("%.2f", currentStock.getStock().getQuote().getPrice().doubleValue()));
         holder.stockChangeText.setText(textChange + " (" + Math.abs(currentStock.getStock().getQuote().getChangeInPercent().doubleValue()) + "%)");
         holder.stockChangeText.setTextColor(context.getResources().getColor(colorOfChange));
-        holder.stockStarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onStockListener.onStarClick(v, position);
-            }
-        });
+        holder.stockStarButton.setOnClickListener(v -> onStockListener.onStarClick(v, position));
     }
 
     @SuppressLint("DefaultLocale")
@@ -148,11 +123,11 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
     @SuppressLint("UseCompatLoadingForDrawables")
     private Drawable setStarColor(int position) {
         Drawable color;
-        StockListElement currentStock = null;
+        StockListElement currentStock;
         if (isSelectAllStocks) {
             currentStock = stocks.get(position);
         }
-        else if (isFiltered) {
+        else {
             currentStock = filterStocks.get(position);
         }
 
@@ -199,7 +174,12 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         else if (isFiltered) {
             currentStockList = filterStocks;
         }
-        return currentStockList.size();
+        if (currentStockList != null) {
+            return currentStockList.size();
+        }
+        else {
+            return 0;
+        }
     }
 
     @Override
@@ -280,50 +260,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         }
     }
 
-    private class ParseStocks extends AsyncTask<Void, Void, Void> {
-        String ticker;
-        Stock stock;
-
-        ParseStocks(String ticker) {
-            this.ticker = ticker;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                stock = YahooFinance.get(ticker);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            StockListElement stockListElement = new StockListElement();
-            stockListElement.setStock(stock);
-            stocks.add(stockListElement);
-            stocks.get(i).setImageId(images[i]);
-            i++;
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            StockAdapter.this.notifyDataSetChanged();
-
-            if (favStocks != null && !isSetFavStocks) {
-                if (stocks.size() > max) {
-                    for (String index : favStocks) {
-                        int i = Integer.parseInt(index);
-                        if (stocks.size() > i) {
-                            stocks.get(i).setStarSelected(true);
-                        }
-                        else return;
-                    }
-                    notifyDataSetChanged();
-                    isSetFavStocks = true;
-                }
-            }
-        }
-    }
-
     public interface OnStockListener {
         void onStockClick(View view, int position);
         void onStarClick(View view, int position);
@@ -336,7 +272,6 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         }
         else {
             stock = stocks.get(indexOfFilterStocks.get(position));
-            System.out.println(indexOfFilterStocks.get(position));
         }
         return stock;
     }
@@ -349,5 +284,36 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
             }
         }
         return favStocks;
+    }
+
+    public void setStocks(ArrayList<StockListElement> stocks) {
+        this.stocks = stocks;
+
+        if (favStocks != null && !isSetFavStocks && stocks != null) {
+            if (stocks.size() > max) {
+                for (String index : favStocks) {
+                    int i = Integer.parseInt(index);
+                    if (stocks.size() > i) {
+                        stocks.get(i).setStarSelected(true);
+                    }
+                    else return;
+                }
+                notifyDataSetChanged();
+                isSetFavStocks = true;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<StockListElement> getPopularStocks() {
+        ArrayList<StockListElement> popularStocks = new ArrayList<>();
+        for (int position = 0; position < positionsOfPopularStocks.length; position++) {
+            popularStocks.add(stocks.get(positionsOfPopularStocks[position]));
+        }
+        return popularStocks;
+    }
+
+    public int[] getPositionsOfPopularStocks() {
+        return positionsOfPopularStocks;
     }
 }
