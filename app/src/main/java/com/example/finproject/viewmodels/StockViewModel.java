@@ -9,7 +9,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.finproject.models.StockListElement;
 import com.example.finproject.repo.Repository;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import yahoofinance.YahooFinance;
 
 public class StockViewModel extends AndroidViewModel {
 
@@ -25,7 +28,6 @@ public class StockViewModel extends AndroidViewModel {
 
     @NonNull
     public MutableLiveData<ArrayList<StockListElement>> getStocks() {
-        stocks = repo.getStocks();
         return stocks;
     }
 }

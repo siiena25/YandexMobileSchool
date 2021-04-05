@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finproject.R;
-import com.example.finproject.adapters.PopularRequestsAdapter;
 import com.example.finproject.adapters.StockAdapter;
 import com.example.finproject.fragments.SearchEmptyFragment;
 import com.example.finproject.fragments.SearchResultFragment;
@@ -30,9 +29,9 @@ import com.example.finproject.models.StockListElement;
 import com.example.finproject.repo.Repository;
 import com.example.finproject.viewmodels.StockViewModel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.zip.ZipEntry;
 
 public class MainActivity extends AppCompatActivity implements StockAdapter.OnStockListener {
 
@@ -267,15 +266,36 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "DefaultLocale"})
     public void onStockClick(View view, int position) {
         Intent intent = new Intent(this, StockActivity.class);
         StockListElement currentStock = stockAdapter.getStockListElement(position);
+
+        BigDecimal zero = new BigDecimal("0");
+        String textChange;
+        int colorOfChange;
+        BigDecimal change = currentStock.getStock().getQuote().getChange();
+        if (change.compareTo(zero) > 0) {
+            textChange = "+$" + String.format("%.2f", change);
+            colorOfChange = R.color.colorGreen;
+        }
+        else if (change.compareTo(zero) == 0) {
+            textChange = "$" + String.format("%.2f", change);
+            colorOfChange = R.color.colorBlack;
+        }
+        else {
+            textChange = "-$" + String.format("%.2f", Math.abs(change.doubleValue()));
+            colorOfChange = R.color.colorRed;
+        }
+
         intent.putExtra("is popular stocks", false);
         intent.putExtra("stock name", currentStock.getStock().getName());
         intent.putExtra("stock symbol", currentStock.getStock().getSymbol());
         intent.putExtra("stock star", currentStock.getIsStarSelected());
         intent.putExtra("pos", position);
+        intent.putExtra("stock price", "$" + String.format("%.2f", currentStock.getStock().getQuote().getPrice().doubleValue()));
+        intent.putExtra("stock change", textChange + " (" + Math.abs(currentStock.getStock().getQuote().getChangeInPercent().doubleValue()) + "%)");
+        intent.putExtra("stock change color", colorOfChange);
         pos = position;
         startActivityForResult(intent, REQUEST_CODE);
     }
