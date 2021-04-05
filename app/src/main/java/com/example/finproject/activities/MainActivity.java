@@ -77,25 +77,27 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
             currentFragment = savedInstanceState.getString(CURRENT_FRAGMENT);
             pos = savedInstanceState.getInt("pos");
             inputText = savedInstanceState.getString("inputText");
-            initRecyclerViewStocks();
-            setSearchViewListeners();
         }
         else {
             Repository.getInstance().loadStocks();
             StocksAndFavouriteFragment stocksAndFavouriteFragment = new StocksAndFavouriteFragment();
             currentFragment = getString(FRAGMENT_STOCKS_AND_FAVOURITE);
             loadFragment(stocksAndFavouriteFragment, currentFragment);
-            initRecyclerViewStocks();
-            setSearchViewListeners();
         }
+
+        initRecyclerViewStocks();
+        setSearchViewListeners();
 
         StockViewModel stockViewModel = new ViewModelProvider(this).get(StockViewModel.class);
         stockViewModel.getStocks().observe(this, new Observer<ArrayList<StockListElement>>() {
             @Override
             public void onChanged(ArrayList<StockListElement> stocks) {
                 stockAdapter.setStocks(stocks);
+                System.out.println("onChanged" + stockAdapter.getItemCount());
             }
         });
+
+        stockAdapter.setStocks(stockViewModel.getStocks().getValue());
 
         popularStarPosition = new ArrayList<>();
         popularStarIsSelected = new ArrayList<>();
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         recyclerViewStocks.setLayoutManager(new LinearLayoutManager(this));
         stockAdapter = new StockAdapter(this, this, getSharedFavouriteStocks);
         recyclerViewStocks.setAdapter(stockAdapter);
+        System.out.println("init");
     }
 
     private void setSearchViewListeners() {
