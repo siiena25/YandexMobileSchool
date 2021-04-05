@@ -24,6 +24,8 @@ public class StockActivity extends AppCompatActivity {
     private String stockName;
     private String stockSymbol;
     private boolean isStarSelected;
+    private boolean isPopularStocks;
+    private int pos;
     private int colorGrey;
     private int colorBlack;
 
@@ -56,6 +58,9 @@ public class StockActivity extends AppCompatActivity {
         stockName = arguments.get("stock name").toString();
         stockSymbol = arguments.get("stock symbol").toString();
         isStarSelected = arguments.getBoolean("stock star");
+        isPopularStocks = arguments.getBoolean("is popular stocks");
+        pos = arguments.getInt("pos");
+        System.out.println(isPopularStocks + " ispopularstocks");
 
         colorGrey = getResources().getColor(R.color.colorGrey);
         colorBlack = getResources().getColor(R.color.colorBlack);
@@ -213,6 +218,8 @@ public class StockActivity extends AppCompatActivity {
     public void finish(){
         Intent intent = new Intent();
         intent.putExtra("is star selected", isStarSelected);
+        intent.putExtra("is popular stocks", isPopularStocks);
+        intent.putExtra("pos", pos);
         setResult(RESULT_OK, intent);
         super.finish();
     }

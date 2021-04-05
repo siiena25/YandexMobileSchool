@@ -21,23 +21,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finproject.R;
+import com.example.finproject.adapters.PopularRequestsAdapter;
 import com.example.finproject.adapters.StockAdapter;
 import com.example.finproject.fragments.SearchEmptyFragment;
 import com.example.finproject.fragments.SearchResultFragment;
 import com.example.finproject.fragments.StocksAndFavouriteFragment;
 import com.example.finproject.models.StockListElement;
+import com.example.finproject.repo.Repository;
 import com.example.finproject.viewmodels.StockViewModel;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.zip.ZipEntry;
 
 public class MainActivity extends AppCompatActivity implements StockAdapter.OnStockListener {
 
-    private RecyclerView listViewStocks;
+    private RecyclerView recyclerViewStocks;
     private StockAdapter stockAdapter;
-    private SearchView searchView;
+
+    private RecyclerView recyclerViewPopularStocks;
+    private PopularRequestsAdapter popularRequestsAdapter;
+
     private String currentFragment = null;
-    private String lastFragment = null;
     private String inputText = null;
 
     private static final String CURRENT_FRAGMENT = "Current fragment";
@@ -55,9 +60,8 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
 
     private final int REQUEST_CODE = 1;
     private int pos = -1;
-
-    private SearchView.OnQueryTextListener listener;
-    private StockViewModel stockViewModel;
+    private ArrayList<Integer> popularStarPosition;
+    private ArrayList<Boolean> popularStarIsSelected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,45 +73,56 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         getSharedFavouriteStocks = sharedPreferences.getStringSet("favourite stocks", null);
 
-        initRecyclerView();
-        setSearchViewListeners();
-
         if (savedInstanceState != null) {
             currentFragment = savedInstanceState.getString(CURRENT_FRAGMENT);
             pos = savedInstanceState.getInt("pos");
             inputText = savedInstanceState.getString("inputText");
+            initRecyclerViewStocks();
+            setSearchViewListeners();
         }
         else {
+            Repository.getInstance().loadStocks();
             StocksAndFavouriteFragment stocksAndFavouriteFragment = new StocksAndFavouriteFragment();
             currentFragment = getString(FRAGMENT_STOCKS_AND_FAVOURITE);
             loadFragment(stocksAndFavouriteFragment, currentFragment);
+            initRecyclerViewStocks();
+            setSearchViewListeners();
         }
 
-        stockViewModel = new ViewModelProvider(this).get(StockViewModel.class);
-        final Observer<ArrayList<StockListElement>> stockListObserver = new Observer<ArrayList<StockListElement>>() {
+        StockViewModel stockViewModel = new ViewModelProvider(this).get(StockViewModel.class);
+        stockViewModel.getStocks().observe(this, new Observer<ArrayList<StockListElement>>() {
             @Override
             public void onChanged(ArrayList<StockListElement> stocks) {
                 stockAdapter.setStocks(stocks);
             }
-        };
-        stockViewModel.getStocks().observe(this, stockListObserver);
+        });
+
+        popularStarPosition = new ArrayList<>();
+        popularStarIsSelected = new ArrayList<>();
     }
 
-    private void initRecyclerView() {
-        listViewStocks = findViewById(R.id.recycler_view_stocks);
-        listViewStocks.setLayoutManager(new LinearLayoutManager(this));
+    public Set<String> getSharedFavouriteStocks() {
+        return getSharedFavouriteStocks;
+    }
+
+    public ArrayList<StockListElement> getPopularStocks() {
+        return stockAdapter.getPopularStocks();
+    }
+
+    private void initRecyclerViewStocks() {
+        recyclerViewStocks = findViewById(R.id.recycler_view_stocks);
+        recyclerViewStocks.setLayoutManager(new LinearLayoutManager(this));
         stockAdapter = new StockAdapter(this, this, getSharedFavouriteStocks);
-        listViewStocks.setAdapter(stockAdapter);
+        recyclerViewStocks.setAdapter(stockAdapter);
     }
 
     private void setSearchViewListeners() {
-        searchView = findViewById(R.id.search_view);
+        SearchView searchView = findViewById(R.id.search_view);
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!currentFragment.equals(FRAGMENT_SEARCH_EMPTY_TEXT)) {
                     SearchEmptyFragment searchEmptyFragment = new SearchEmptyFragment();
-                    lastFragment = currentFragment;
                     currentFragment = getString(FRAGMENT_SEARCH_EMPTY);
                     loadFragment(searchEmptyFragment, currentFragment);
                 }
@@ -121,6 +136,15 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
                 currentFragment = FRAGMENT_STOCKS_AND_FAVOURITE_TEXT;
                 stockAdapter.setIsSelectAllStocks(true);
                 stockAdapter.setIsFiltered(false);
+                System.out.println(popularStarPosition);
+                if (popularStarPosition.size() != 0) {
+                    for (int index = 0; index < popularStarPosition.size(); index++) {
+                        stockAdapter.setIsSelectStar(popularStarPosition.get(index), popularStarIsSelected.get(index));
+                        stockAdapter.notifyItemChanged(popularStarPosition.get(index));
+                    }
+                    popularStarPosition.clear();
+                    popularStarIsSelected.clear();
+                }
                 return false;
             }
         });
@@ -159,20 +183,12 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         });
     }
 
-    public SharedPreferences.Editor getEditor() {
-        return editor;
-    }
-
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
-    }
-
     public StockAdapter getStockAdapter() {
         return stockAdapter;
     }
 
-    public RecyclerView getListViewStocks() {
-        return listViewStocks;
+    public RecyclerView getRecyclerViewStocks() {
+        return recyclerViewStocks;
     }
 
     public void onClickFavouriteTextView(View view) {
@@ -208,26 +224,15 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         }
     }
 
-    public String getCurrentFragment() {
-        return currentFragment;
-    }
-
-    public void setCurrentFragment(String currentFragment) {
-        this.currentFragment = currentFragment;
-    }
-
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             undoFragment();
             if (currentFragment.equals(FRAGMENT_SEARCH_EMPTY_TEXT)) {
-                listViewStocks.setVisibility(View.VISIBLE);
-                System.out.println(stockAdapter.getItemCount());
+                recyclerViewStocks.setVisibility(View.VISIBLE);
             }
         }
-        else {
-            finish();
-        }
+        else finish();
     }
 
     @Override
@@ -261,24 +266,20 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    @Override
     public void onStockClick(View view, int position) {
         Intent intent = new Intent(this, StockActivity.class);
         StockListElement currentStock = stockAdapter.getStockListElement(position);
+        intent.putExtra("is popular stocks", false);
         intent.putExtra("stock name", currentStock.getStock().getName());
         intent.putExtra("stock symbol", currentStock.getStock().getSymbol());
         intent.putExtra("stock star", currentStock.getIsStarSelected());
+        intent.putExtra("pos", position);
         pos = position;
         startActivityForResult(intent, REQUEST_CODE);
     }
 
-    @Override
     public void onStarClick(View view, int position) {
-        if (stockAdapter.getIsSelectStar(position)) {
-            stockAdapter.setIsSelectStar(position, false);
-        } else {
-            stockAdapter.setIsSelectStar(position, true);
-        }
+        stockAdapter.setIsSelectStar(position, !stockAdapter.getIsSelectStar(position));
         stockAdapter.notifyDataSetChanged();
 
         Set<String> favouriteStocks = stockAdapter.getFavouriteStocks();
@@ -288,17 +289,21 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE:
-                    boolean isStarSelected = data.getBooleanExtra("is star selected", false);
-                    if (stockAdapter.getItemCount() > 0) {
-                        stockAdapter.getStockListElement(pos).setStarSelected(isStarSelected);
-                        stockAdapter.notifyItemChanged(pos);
-                    }
-                    break;
+            if (requestCode == REQUEST_CODE) {
+                boolean isStarSelected = data.getBooleanExtra("is star selected", false);
+                boolean isPopularStocks = data.getBooleanExtra("is popular stocks", false);
+                int position = (!isPopularStocks) ? pos : stockAdapter.getPositionsOfPopularStocks()[data.getIntExtra("pos", -1)];
+                if (stockAdapter.getItemCount() > 0 && !isPopularStocks) {
+                    stockAdapter.getStockListElement(position).setStarSelected(isStarSelected);
+                    stockAdapter.notifyItemChanged(position);
+                }
+                else {
+                    this.popularStarPosition.add(position);
+                    this.popularStarIsSelected.add(isStarSelected);
+                }
             }
         }
     }

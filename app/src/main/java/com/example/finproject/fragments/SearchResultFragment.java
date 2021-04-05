@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.finproject.R;
 import com.example.finproject.activities.MainActivity;
 
+import java.util.Objects;
+
 public class SearchResultFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerView listViewStocks = ((MainActivity) getActivity()).getListViewStocks();
+        RecyclerView listViewStocks = ((MainActivity) Objects.requireNonNull(getActivity())).getRecyclerViewStocks();
         listViewStocks.setVisibility(View.VISIBLE);
         return inflater.inflate(R.layout.fragment_search_result, container, false);
     }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/colorWhite"
     android:paddingTop="20dp"
@@ -16,10 +16,13 @@
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/colorBlack"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:id="@+id/list_popular_requests"/>
+        android:layout_height="65dp"
+        android:id="@+id/list_popular_requests"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -29,9 +32,11 @@
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/colorBlack"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="65dp"
         android:id="@+id/list_searched"/>
 
 </LinearLayout>
