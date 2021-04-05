@@ -45,6 +45,16 @@ public class Repository {
     @NonNull
     public MutableLiveData<ArrayList<StockListElement>> getStocks() {
         stocks.setValue(updatedStocks);
+        while (stocks.getValue().size() < 19) {
+            stocks.setValue(updatedStocks);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         return stocks;
     }
 

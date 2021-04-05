@@ -227,7 +227,9 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             filterStocks.clear();
-            filterStocks.addAll((Collection<? extends StockListElement>) results.values);
+            if (results.values != null) {
+                filterStocks.addAll((Collection<? extends StockListElement>) results.values);
+            }
             notifyDataSetChanged();
         }
     };

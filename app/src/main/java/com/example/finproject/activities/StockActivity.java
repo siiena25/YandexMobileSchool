@@ -3,7 +3,6 @@ package com.example.finproject.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -23,6 +22,9 @@ import com.example.finproject.fragments.SummaryFragment;
 public class StockActivity extends AppCompatActivity {
     private String stockName;
     private String stockSymbol;
+    private String stockPrice;
+    private String stockChange;
+    private int stockChangeColor;
     private boolean isStarSelected;
     private boolean isPopularStocks;
     private int pos;
@@ -57,10 +59,12 @@ public class StockActivity extends AppCompatActivity {
         Bundle arguments = getIntent().getExtras();
         stockName = arguments.get("stock name").toString();
         stockSymbol = arguments.get("stock symbol").toString();
+        stockPrice = arguments.get("stock price").toString();
+        stockChange = arguments.get("stock change").toString();
+        stockChangeColor = (int) arguments.get("stock change color");
         isStarSelected = arguments.getBoolean("stock star");
         isPopularStocks = arguments.getBoolean("is popular stocks");
         pos = arguments.getInt("pos");
-        System.out.println(isPopularStocks + " ispopularstocks");
 
         colorGrey = getResources().getColor(R.color.colorGrey);
         colorBlack = getResources().getColor(R.color.colorBlack);
@@ -222,5 +226,17 @@ public class StockActivity extends AppCompatActivity {
         intent.putExtra("pos", pos);
         setResult(RESULT_OK, intent);
         super.finish();
+    }
+
+    public String getStockPrice() {
+        return stockPrice;
+    }
+
+    public String getStockChange() {
+        return stockChange;
+    }
+
+    public int getStockChangeColor() {
+        return  stockChangeColor;
     }
 }

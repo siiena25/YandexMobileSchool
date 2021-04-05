@@ -11,7 +11,7 @@
         android:id="@+id/fragment_stock_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="$131.93"
+        android:text="$64,65"
         android:textSize="28sp"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/colorBlack"
@@ -20,7 +20,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+$0.12 (1,15%)"
+        android:text="-$0,32 (0.49%)"
+        android:id="@+id/fragment_stock_change"
         android:textColor="@color/colorGreen"
         android:textSize="12sp"
         android:fontFamily="@font/montserrat"
