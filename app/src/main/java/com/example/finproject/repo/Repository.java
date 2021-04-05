@@ -1,7 +1,6 @@
 package com.example.finproject.repo;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.finproject.R;
@@ -33,7 +32,7 @@ public class Repository {
     private ArrayList<StockListElement> updatedStocks;
 
     public static Repository getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             synchronized (Repository.class) {
                 if(instance == null) {
                     instance = new Repository();
@@ -44,7 +43,7 @@ public class Repository {
     }
 
     @NonNull
-    public LiveData<ArrayList<StockListElement>> getStocks() {
+    public MutableLiveData<ArrayList<StockListElement>> getStocks() {
         stocks.setValue(updatedStocks);
         return stocks;
     }
