@@ -10,7 +10,8 @@
     android:background="@color/colorWhite"
     android:orientation="vertical"
     tools:context=".activities.MainActivity"
-    android:configChanges="keyboardHidden|orientation">
+    android:configChanges="keyboardHidden|orientation"
+    android:focusableInTouchMode="true">
 
     <SearchView
         android:id="@+id/search_view"

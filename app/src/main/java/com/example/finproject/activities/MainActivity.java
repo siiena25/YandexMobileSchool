@@ -39,9 +39,6 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
     private RecyclerView recyclerViewStocks;
     private StockAdapter stockAdapter;
 
-    private RecyclerView recyclerViewPopularStocks;
-    private PopularRequestsAdapter popularRequestsAdapter;
-
     private String currentFragment = null;
     private String inputText = null;
 
@@ -73,8 +70,15 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         getSharedFavouriteStocks = sharedPreferences.getStringSet("favourite stocks", null);
 
+        initRecyclerViewStocks();
+        setSearchViewListeners();
+
         if (savedInstanceState != null) {
             currentFragment = savedInstanceState.getString(CURRENT_FRAGMENT);
+            if (currentFragment.equals(FRAGMENT_SEARCH_RESULT_TEXT)) {
+                stockAdapter.setIsSelectAllStocks(false);
+                stockAdapter.setIsFiltered(true);
+            }
             pos = savedInstanceState.getInt("pos");
             inputText = savedInstanceState.getString("inputText");
         }
@@ -85,15 +89,11 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
             loadFragment(stocksAndFavouriteFragment, currentFragment);
         }
 
-        initRecyclerViewStocks();
-        setSearchViewListeners();
-
         StockViewModel stockViewModel = new ViewModelProvider(this).get(StockViewModel.class);
         stockViewModel.getStocks().observe(this, new Observer<ArrayList<StockListElement>>() {
             @Override
             public void onChanged(ArrayList<StockListElement> stocks) {
                 stockAdapter.setStocks(stocks);
-                System.out.println("onChanged" + stockAdapter.getItemCount());
             }
         });
 
@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements StockAdapter.OnSt
         recyclerViewStocks.setLayoutManager(new LinearLayoutManager(this));
         stockAdapter = new StockAdapter(this, this, getSharedFavouriteStocks);
         recyclerViewStocks.setAdapter(stockAdapter);
-        System.out.println("init");
     }
 
     private void setSearchViewListeners() {
