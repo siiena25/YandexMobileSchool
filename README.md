@@ -34,8 +34,8 @@
 При выполнении задачи использовался [Yahoo Finance API](https://financequotes-api.com/).
 Были реализованы все пункты минимальной функциональности приложения. В качестве изначального списка акций я взяла акции, которые были приведены в примере дизайна приложения на сайте Figma. Также была дополнительно реализована логика экрана с просмотром информации об акции (однако, выбранный мною API не предоставляет информацию о графиках изменения цены за день / месяц / год, новости компании и т.д., поэтому была выведена лишь основная информация о компании).
 
-<img src="https://user-images.githubusercontent.com/54817988/113727624-f8ccdd80-96fd-11eb-97f2-e1a51f098bbd.jpg" width="270" height="480" />
-<img src="https://user-images.githubusercontent.com/54817988/113727719-0f733480-96fe-11eb-853b-de9185a3f0fa.jpg" width="270" height="480" />
-<img src="https://user-images.githubusercontent.com/54817988/113727733-11d58e80-96fe-11eb-99a2-5b45b6fff129.jpg" width="270" height="480" />
-<img src="https://user-images.githubusercontent.com/54817988/113727753-1601ac00-96fe-11eb-960a-884ee6f87126.jpg" width="270" height="480" />
 <img src="https://user-images.githubusercontent.com/54817988/113727768-19953300-96fe-11eb-8a93-47397842948e.jpg" width="270" height="480" />
+<img src="https://user-images.githubusercontent.com/54817988/113727753-1601ac00-96fe-11eb-960a-884ee6f87126.jpg" width="270" height="480" />
+<img src="https://user-images.githubusercontent.com/54817988/113727733-11d58e80-96fe-11eb-99a2-5b45b6fff129.jpg" width="270" height="480" />
+<img src="https://user-images.githubusercontent.com/54817988/113727719-0f733480-96fe-11eb-853b-de9185a3f0fa.jpg" width="270" height="480" />
+<img src="https://user-images.githubusercontent.com/54817988/113727624-f8ccdd80-96fd-11eb-97f2-e1a51f098bbd.jpg" width="270" height="480" />
